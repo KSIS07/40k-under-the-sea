@@ -1,3 +1,5 @@
+use std::thread::sleep;
+
 use macroquad::prelude::*;
 
 #[macroquad::main("40k-under-sea")]
@@ -88,9 +90,9 @@ async fn main() {
                 }
             }
             if player_x >= sonar_hitbox[0] && player_x <= sonar_hitbox[1] && player_y == TOP_DECK {
-                sonar();
+                sonar().await;
             }
-        }
+        }           
 
         if on_ladder {
             player_x = 722.0 * ZOOM;
@@ -119,9 +121,9 @@ async fn main() {
 }
 
 async fn sonar() {
-    let mut zoom: f32 = 1.0;
+    let mut zoom: f32 = 8.0;
 
-    const BACKGROUND_GRAY: macroquad::color::Color = Color::new(122.0, 134.0, 153.0, 1.0);
+    const BACKGROUND_GRAY: macroquad::color::Color = Color::new(0.47843137254, 0.52549019607, 0.6, 1.0);
 
     let sonar_image: Texture2D = load_texture("images/u-boat/sonar.png").await.unwrap();
     sonar_image.set_filter(FilterMode::Nearest);
@@ -131,6 +133,9 @@ async fn sonar() {
     let mut camera: Camera2D;
 
     loop {
+        if is_key_pressed(KeyCode::Q) {
+            break;
+        }
 
         camera_x = sonar_image.width() / 2.0 * zoom - screen_width() / 2.0;
         camera_y = sonar_image.height() / 2.0 * zoom - screen_height() / 2.0;
@@ -144,7 +149,7 @@ async fn sonar() {
             ..Default::default()
         },);
 
-        
+
         next_frame().await
     }
 }
